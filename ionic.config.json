@@ -1,0 +1,7 @@
+{
+  "name": "recycling-ui",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}

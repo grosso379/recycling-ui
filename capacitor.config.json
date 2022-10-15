@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "recycling-ui",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
