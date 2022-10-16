@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router';
-
+import VueGoogleMaps from '@fawmi/vue-google-maps';
 import { IonicVue } from '@ionic/vue';
 
 /* Core CSS required for Ionic components to work properly */
@@ -23,10 +23,17 @@ import '@ionic/vue/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+// Above the createApp() line
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+// Call the element loader after the platform has been bootstrapped
+defineCustomElements(window);
+
 const app = createApp(App)
   .use(IonicVue)
-  .use(router);
-  
+  .use(router)
+  .use(VueGoogleMaps, {load: {key: 'AIzaSyCbX0t-Z95IhjDk2ekbCvU0CMaUbG9wwaI'}});
+
 router.isReady().then(() => {
   app.mount('#app');
 });
