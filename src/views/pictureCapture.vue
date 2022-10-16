@@ -51,6 +51,7 @@ import {
 } from '@ionic/vue';
 import axios from 'axios';
 import FormData from 'form-data';
+import Noty from 'noty';
 
 import { Geolocation } from "@capacitor/geolocation";
 const getCurrentPosition = async () => {
@@ -79,51 +80,66 @@ export default defineComponent({
     async submitPhoto(){
       await this.takePhoto();
 
-      // start loader
-
-      // const formData = new FormData();
-      // if (this.photos.length > 0 && this.photos[0].webviewPath) {
-      //   const imagebuffer = await fetch(this.photos[0].webviewPath);
-
-      //   formData.append('file', await imagebuffer.blob(), 'image.jpg');
-      //   axios.post(`${process.env.RECYCLE_API}/search`, formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   }).then((response) => {
-      //     console.log(response);
-      //     this.$router.push('/tabs/recyclingMap');
-      //     // stop loader
-      //   }).catch((error) => {
-      //     console.log(error);
-      //     // stop loader, error page
-      //   });
-      // }
-      // Get Postal Code
-      let currentPosition = await getCurrentPosition();
-      let lat = currentPosition.coords.latitude
-      let lng = currentPosition.coords.longitude
-      let locationUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}`
-      let currentLocation = await axios.get(locationUrl)
-      let address_components = currentLocation.data.results[0].formatted_address.split(",")
-      let postal_code = address_components[address_components.length - 2].split(" ")[2]
-      let material_id = 5898478
-      
-      // Get locations
-      let locations_url = `https://legacyapi.recyclenation.com/locations?zip=${postal_code}&radius=100&offset=0&limit=5&material_id=${material_id}`
-      let locations: any = await axios.get(locations_url)
-      // Format markers
-      console.log("Locations here: ", locations)
-      let locations_data = locations.data.locations
-      let markers:any = []
-      for (let loc of locations_data){
-        let marker = { position: { lat: loc.latitude, lng: loc.lodegitue }, id: loc.location_id , description: loc.description, url:loc.url}
-        markers.push(marker)
+      const formData = new FormData();
+      if (this.photos.length > 0 && this.photos[0].webviewPath) {
+        const imagebuffer = await fetch(this.photos[0].webviewPath);
+        console.log(process.env.VUE_APP_RECYCLE_API)
+        formData.append('uploaded_img', await imagebuffer.blob(), 'image.jpg');
+        axios.post(`${process.env.VUE_APP_RECYCLE_API}/search`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }).then((response) => {
+          console.log(response);
+          
+          let conf = response.data[0]['sim'];
+          if (conf < 0.5) {
+            // this.$router.push('/tabs/recyclingMap');
+            let material_id = response.data[0]['id'];
+            
+            let currentPosition = await getCurrentPosition();
+            let lat = currentPosition.coords.latitude
+            let lng = currentPosition.coords.longitude
+            let locationUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}`
+            let currentLocation = await axios.get(locationUrl)
+            let address_components = currentLocation.data.results[0].formatted_address.split(",")
+            let postal_code = address_components[address_components.length - 2].split(" ")[2]
+            
+            // Get locations
+            let locations_url = `https://legacyapi.recyclenation.com/locations?zip=${postal_code}&radius=100&offset=0&limit=5&material_id=${material_id}`
+            let locations: any = await axios.get(locations_url)
+            // Format markers
+            console.log("Locations here: ", locations)
+            let locations_data = locations.data.locations
+            let markers:any = []
+            for (let loc of locations_data){
+              let marker = { position: { lat: loc.latitude, lng: loc.lodegitue }, id: loc.location_id , description: loc.description, url:loc.url}
+              markers.push(marker)
+            }
+            this.$router.push({name:'recyclingMap', params:{markers:markers}});
+          }
+        }).catch((error) => {
+          console.log(error);
+        });
       }
-      this.$router.push({name:'recyclingMap', params:{markers:markers}});
+      
+      // stop loader
+      this.$router.push({ path: '/tabs/pictureCapture', query: { error: "Prediction not confident, please try to take an image in different lightning." }});
+      // go back and error
     }
   },
   setup() {
+    let uri = window.location.search.substring(1); 
+    let params = new URLSearchParams(uri);
+    let error = params.get('error');
+    if (error) {
+      console.log(error);
+      new Noty({
+        type: 'error',
+        text: error,
+      }).show();
+    }
+
     const { photos, deletePhoto, takePhoto } = usePhotoGallery();
     return {
       photos,
