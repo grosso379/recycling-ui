@@ -49,6 +49,8 @@ import {
   IonCol,
   IonImg,
 } from '@ionic/vue';
+import axios from 'axios';
+import FormData from 'form-data';
 
 export default defineComponent({
   name: 'pictureCapture',
@@ -70,7 +72,29 @@ export default defineComponent({
   methods:{
     async submitPhoto(){
       await this.takePhoto();
+
+      // start loader
+
+      // const formData = new FormData();
+      // if (this.photos.length > 0 && this.photos[0].webviewPath) {
+      //   const imagebuffer = await fetch(this.photos[0].webviewPath);
+
+      //   formData.append('file', await imagebuffer.blob(), 'image.jpg');
+      //   axios.post(`${process.env.RECYCLE_API}/search`, formData, {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   }).then((response) => {
+      //     console.log(response);
+      //     this.$router.push('/tabs/recyclingMap');
+      //     // stop loader
+      //   }).catch((error) => {
+      //     console.log(error);
+      //     // stop loader, error page
+      //   });
+      // }
       this.$router.push('/tabs/recyclingMap');
+      // go back and error
     }
   },
   setup() {

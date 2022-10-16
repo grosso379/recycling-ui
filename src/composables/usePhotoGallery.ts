@@ -12,11 +12,12 @@ export function usePhotoGallery() {
             quality: 100,
         });
         const fileName = new Date().getTime() + '.jpeg';
+
         const savedFileImage = {
             filepath: fileName,
             webviewPath: photo.webPath,
         };
-        console.log(photos.value)
+
         photos.value = [savedFileImage, ...photos.value];
     };
 
@@ -28,7 +29,7 @@ export function usePhotoGallery() {
         photos,
         takePhoto,
         deletePhoto,
-    }; 
+    };
 }
 
 export interface UserPhoto {
