@@ -60,7 +60,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.$refs.myMapRef.$mapPromise.then((map: any) => {
+    (this.$refs['myMapRef'] as any).$mapPromise.then((map: any) => {
       map.addListener('click', (mapsMouseEvent: any) => {
         console.log(mapsMouseEvent.latLng.lat());
         console.log(mapsMouseEvent.latLng.lng());

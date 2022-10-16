@@ -24,7 +24,6 @@ export function usePhotoGallery() {
         photos.value.splice(index, 1)
     }
     
-
     return {
         photos,
         takePhoto,
