@@ -32,7 +32,7 @@ defineCustomElements(window);
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
-  .use(VueGoogleMaps, {load: {key: 'AIzaSyCbX0t-Z95IhjDk2ekbCvU0CMaUbG9wwaI'}});
+  .use(VueGoogleMaps, {load: {key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY}});
 
 router.isReady().then(() => {
   app.mount('#app');
