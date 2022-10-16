@@ -25,7 +25,6 @@
        }"
       >
         <div><a href="https://www.google.com/maps/place/Northwest+Missouri+State+University/@40.350776,-94.875714,14z/data=!4m5!3m4!1s0x0:0xfc94da964c338044!8m2!3d40.3519854!4d-94.8825243?hl=es-US">{{m.description}}</a></div>
-        <!-- <div>{{ m.description }}</div> -->
       </GMapInfoWindow>
     </GMapMarker>
   </GMapMap>
@@ -43,8 +42,7 @@ const getCurrentPosition = async () => {
 export default defineComponent({
   name: "Map",
   props: {
-    lat: Number,
-    lng: Number,
+    markers: Array<any>()
   },
   data() {
     return {
@@ -73,10 +71,11 @@ export default defineComponent({
       lat: currentPosition.coords.latitude,
       lng: currentPosition.coords.longitude,
     };
-    let markers = [
-      { position: { lat: center.lat, lng: center.lng }, id: 1 , description: 'This is a test description'},
-      { position: { lat: props.lat, lng: props.lng }, id: 2 , description: 'This is another test description'},
-    ];
+    // let markers = [
+    //   { position: { lat: center.lat, lng: center.lng }, id: 1 , description: 'This is a test description'},
+    //   { position: { lat: props.lat, lng: props.lng }, id: 2 , description: 'This is another test description'},
+    // ];
+    let markers = props.markers
     return {
       center,
       markers,

@@ -7,7 +7,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <Suspense>
-        <Map :lat="10" :lng="10"></Map>
+        <Map></Map>
       </Suspense>
     </ion-content>
   </ion-page>
@@ -20,6 +20,15 @@ import Map from '../components/Map.vue'
 
 export default defineComponent({
   name: 'recyclingMap',
-  components: {IonHeader, IonToolbar, IonTitle, IonContent, IonPage, Map}
+  props: {
+    markers: Array<any>()
+  },
+  components: {IonHeader, IonToolbar, IonTitle, IonContent, IonPage, Map},
+  async setup(props) {
+    let markers = props.markers
+    return {
+      markers,
+    };
+  },
 });
 </script>

@@ -52,6 +52,12 @@ import {
 import axios from 'axios';
 import FormData from 'form-data';
 
+import { Geolocation } from "@capacitor/geolocation";
+const getCurrentPosition = async () => {
+  const coordinates = await Geolocation.getCurrentPosition();
+  return coordinates;
+};
+
 export default defineComponent({
   name: 'pictureCapture',
   components: {
@@ -93,8 +99,28 @@ export default defineComponent({
       //     // stop loader, error page
       //   });
       // }
-      this.$router.push('/tabs/recyclingMap');
-      // go back and error
+      // Get Postal Code
+      let currentPosition = await getCurrentPosition();
+      let lat = currentPosition.coords.latitude
+      let lng = currentPosition.coords.longitude
+      let locationUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.VUE_APP_GOOGLE_MAPS_API_KEY}`
+      let currentLocation = await axios.get(locationUrl)
+      let address_components = currentLocation.data.results[0].formatted_address.split(",")
+      let postal_code = address_components[address_components.length - 2].split(" ")[2]
+      let material_id = 5898478
+      
+      // Get locations
+      let locations_url = `https://legacyapi.recyclenation.com/locations?zip=${postal_code}&radius=100&offset=0&limit=5&material_id=${material_id}`
+      let locations: any = await axios.get(locations_url)
+      // Format markers
+      console.log("Locations here: ", locations)
+      let locations_data = locations.data.locations
+      let markers:any = []
+      for (let loc of locations_data){
+        let marker = { position: { lat: loc.latitude, lng: loc.lodegitue }, id: loc.location_id , description: loc.description, url:loc.url}
+        markers.push(marker)
+      }
+      this.$router.push({name:'recyclingMap', params:{markers:markers}});
     }
   },
   setup() {

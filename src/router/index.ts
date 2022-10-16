@@ -21,6 +21,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'recyclingMap',
+        name: 'recyclingMap',
         component: () => import('@/views/recyclingMap.vue')
       }
     ]
